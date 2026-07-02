@@ -1,0 +1,47 @@
+name: Build Família+ Debug APKs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build Admin and Companion APKs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.11.1
+
+      - name: Build debug APKs
+        run: gradle :app-admin:assembleDebug :app-companion:assembleDebug --stacktrace
+
+      - name: Collect APKs
+        run: |
+          mkdir -p artifacts
+          cp app-admin/build/outputs/apk/debug/app-admin-debug.apk artifacts/FamiliaPlus-Admin-debug.apk
+          cp app-companion/build/outputs/apk/debug/app-companion-debug.apk artifacts/BemEstar-Companion-debug.apk
+          ls -lh artifacts
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FamiliaPlus-debug-apks
+          path: artifacts/*.apk
