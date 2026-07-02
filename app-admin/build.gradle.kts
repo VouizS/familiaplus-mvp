@@ -8,6 +8,11 @@ android {
     namespace = "com.sw.vidalink.admin"
     compileSdk = 35
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     defaultConfig {
         applicationId = "com.sw.vidalink.admin"
         minSdk = 26
@@ -15,6 +20,10 @@ android {
         versionCode = 1
         versionName = "0.1.0"
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
